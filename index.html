@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pra Sempre Nós</title>
+<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:700&family=Playfair+Display:ital,wght@1,500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+<style>
+body {
+    font-family: 'Playfair Display', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(to right, #FF0000, #DC143C, #FF69B4);
+    color: white;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-attachment: fixed;
+}
+
+h1 {
+    font-size: 3.5em;
+    margin: 40px 0 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    font-family: 'Amatic SC', cursive;
+    color: white;
+    text-align: center;
+    padding: 20px 40px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 30px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 1.2s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    width: 90%;
+    max-width: 1200px;
+    padding: 20px;
+    box-sizing: border-box;
+    /* Congelamento do conteúdo */
+    pointer-events: none; /* Impede interação */
+    opacity: 0.5; /* Desfoca o conteúdo */
+    transition: opacity 0.3s ease; /* Transição suave */
+}
+
+.container.active {
+  pointer-events: auto; /* Habilita interação ao fechar modal */
+  opacity: 1; /* Remove desfoque ao fechar modal */
+}
+
+
+.carousel {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+    position: relative;
+    margin: 30px 0;
+    border-radius: 20px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4);
+    border: 5px solid rgba(255,255,255,0.2);
+}
+
+.carousel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+    filter: grayscale(100%);
+    pointer-events: auto;
+}
+
+.carousel img.active {
+    opacity: 1;
+    filter: drop-shadow(5px 5px 10px rgba(255, 0, 0, 0.7)) grayscale(0%);
+}
+
+#mensagem {
+    font-size: 1.3em;
+    margin: 20px 0;
+    line-height: 1.6;
+    max-width: 90%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 25px 35px;
+    border-radius: 15px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    text-align: justify;
+    color: white;
+    animation: fadeIn 1s ease-in-out;
+    font-style: italic;
+    font-family: 'Lora', serif;
+}
+
+#contador {
+    margin: 30px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 750px;
+    align-items: center;
+    border-radius: 15px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 1s ease-in-out;
+    border: 3px solid rgba(255,255,255,0.2);
+}
+
+#contador div {
+    font-size: 1.6em;
+    text-shadow: 1px 1px 2px rgba(255, 0, 0, 0.4);
+    font-weight: bold;
+    text-align: center;
+    padding: 12px 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 1px 1px 2px rgba(255, 0, 0, 0.2);
+    color: white;
+}
+
+.counter-icon {
+    font-size: 1.7em;
+    margin-right: 8px;
+    color: white;
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.carousel-indicators span {
+    width: 18px;
+    height: 18px;
+    background-color: rgba(255, 0, 0, 0.6);
+    border-radius: 50%;
+    margin: 0 7px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.carousel-indicators span.active {
+    background-color: #DC143C;
+    opacity: 1;
+}
+
+.section-divider {
+    width: 80%;
+    margin: 35px 0;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+}
+
+#dedicatoria {
+    margin-top: 25px;
+    font-size: 1.1em;
+    text-align: center;
+    color: white;
+    font-style: italic;
+    font-family: 'Lora', serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-100%); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 2.8em; }
+    #contador div { font-size: 1.3em; }
+    .carousel { padding-bottom: 75%; }
+    #contador { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 400px) {
+    h1 { font-size: 2.2em; }
+    #contador div { font-size: 1em; }
+    .carousel { padding-bottom: 100%; }
+}
+
+#modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
+}
+
+#modal-content {
+    background-color: rgba(0,0,0,0.9);
+    margin: 15% auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    width: 400px;
+    max-width: 90%;
+    color: white;
+    font-family: 'Lora', serif;
+    position: relative; /* Necessário para posicionar o botão */
+}
+
+#modal-content h2 {
+    font-size: 1.5em;
+    font-weight: normal;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #DC143C;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+#modal-content p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+#modal-button {
+    background-color: #DC143C;
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: block; /* Botão ocupa toda a largura */
+    margin: 20px auto; /* Centraliza o botão */
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transition: background-color 0.3s ease;
+    font-family: 'Lora', serif;
+}
+
+#modal-button:hover {
+    background-color: #FF69B4;
+}
+</style>
+</head>
+<body>
+<div id="modal">
+    <div id="modal-content">
+        <h2>Uma pequena surpresa...</h2>
+        <p>Para uma melhor experiência, ative o som da página. É uma das minhas pequenas surpresas!</p>
+        <p>Enfim, é isso, eu te amo.</p>
+        <button id="modal-button">Reproduzir</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1 id="titulo" style="animation: slideIn 1.2s ease-in-out;">Pra Sempre Nós</h1>
+
+    <div class="carousel">
+        <img src="imagem1.jpeg" alt="Foto 1">
+        <img src="imagem2.jpeg" alt="Foto 2">
+        <img src="imagem3.jpeg" alt="Foto 3">
+        <img src="imagem4.jpeg" alt="Foto 4">
+        <img src="imagem5.jpeg" alt="Foto 5">
+        <img src="imagem6.jpeg" alt="Foto 6">
+        <img src="imagem7.jpeg" alt="Foto 7">
+        <img src="imagem8.jpeg" alt="Foto 8">
+    </div>
+
+    <div class="carousel-indicators"></div>
+
+    <div id="mensagem" style="animation: slideIn 1.5s ease-in-out;">
+        Há algo em você que transcende qualquer explicação. Cada vez que olho nos seus olhos, sinto uma conexão tão profunda que me deixa sem palavras. Você é amor, beleza e força. Seu sorriso é o que existe de mais belo e ilumina todos os caminhos. A sua risada é a minha música preferida, que embala os meus sonhos e toca o meu coração.
+
+        Desde que você entrou na minha vida, eu não sei mais o que é tristeza ou solidão. Já vivemos tantas coisas juntos, mas nada se compara ao que ainda podemos compartilhar. O nosso amor se fortalece a cada dia, e percebo que sem você não dá para seguir. Agradeço por ser a minha rocha, meu lugar seguro, minha razão de viver.
+
+        O que sinto por você é tão puro e profundo que chamar de "amor" ainda é pouco. Vou fazer o meu melhor todos os dias para merecer você ao meu lado. Eu te amo mais do que tudo Julia, pra todo o sempre, você é o amor da minha vida.
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div id="contador" style="animation: slideIn 1s ease-in-out;">
+        <div id="anos" aria-label="Anos juntos"><i class="fas fa-calendar-alt counter-icon"></i> 0 anos</div>
+        <div id="meses" aria-label="Meses juntos"><i class="fas fa-calendar counter-icon"></i> 0 meses</div>
+        <div id="dias" aria-label="Dias juntos"><i class="fas fa-calendar-day counter-icon"></i> 0 dias</div>
+        <div id="horas" aria-label="Horas juntos"><i class="fas fa-clock counter-icon"></i> 0 horas</div>
+        <div id="minutos" aria-label="Minutos juntos"><i class="fas fa-stopwatch counter-icon"></i> 0 minutos</div>
+        <div id="segundos" aria-label="Segundos juntos"><i class="fas fa-hourglass-start counter-icon"></i> 0 segundos</div>
+    </div>
+
+    <div id="dedicatoria">
+      Com amor, <br>
+      Alisson
+    </div>
+</div>
+<script>
+const dataInicio = moment("2023-12-26T21:00:00");
+const carousel = document.querySelector('.carousel');
+const imagens = carousel.querySelectorAll('img');
+let indiceAtual = 0;
+
+function updateCarousel() {
+    imagens.forEach((img, index) => {
+        img.classList.toggle('active', index === indiceAtual);
+    });
+    document.querySelectorAll('.carousel-indicators span').forEach((span, index) => {
+        span.classList.toggle('active', index === indiceAtual);
+    });
+}
+
+setInterval(() => {
+    indiceAtual = (indiceAtual + 1) % imagens.length;
+    updateCarousel();
+}, 4000);
+
+
+setInterval(() => {
+    const agora = moment();
+    const diferenca = agora.diff(dataInicio, 'seconds');
+    const anos = moment.duration(diferenca, 'seconds').years();
+    const meses = moment.duration(diferenca, 'seconds').months();
+    const dias = moment.duration(diferenca, 'seconds').days();
+    const horas = moment.duration(diferenca, 'seconds').hours();
+    const minutos = moment.duration(diferenca, 'seconds').minutes();
+    const segundos = moment.duration(diferenca, 'seconds').seconds();
+
+    document.getElementById('anos').textContent = `${anos} ano${anos === 1 ? '' : 's'}`;
+    document.getElementById('meses').textContent = `${meses} mês${meses === 1 ? '' : 'es'}`;
+    document.getElementById('dias').textContent = `${dias} dia${dias === 1 ? '' : 's'}`;
+    document.getElementById('horas').textContent = `${horas} hora${horas === 1 ? '' : 's'}`;
+    document.getElementById('minutos').textContent = `${minutos} minuto${minutos === 1 ? '' : 's'}`;
+    document.getElementById('segundos').textContent = `${segundos} segundo${segundos === 1 ? '' : 's'}`;
+}, 1000);
+
+
+const indicatorsContainer = document.querySelector('.carousel-indicators');
+imagens.forEach((_, index) => {
+    const indicator = document.createElement('span');
+    indicatorsContainer.appendChild(indicator);
+});
+
+updateCarousel();
+
+
+// Howler.js Playlist
+const musicas = [
+    {src: 'Sparks.mpeg', name: 'Música 1'},
+    {src: 'Yellow.mpeg', name: 'Música 2'},
+    {src: 'Just The Way You Are.mpeg', name: 'Música 3'},
+    {src: 'Grenade.mpeg', name: 'Música 4'}
+];
+
+let sound = null;
+let currentTrackIndex = 0;
+
+function playNextTrack() {
+    currentTrackIndex = (currentTrackIndex + 1) % musicas.length;
+    playTrack(currentTrackIndex);
+}
+
+function playTrack(index) {
+    if (sound) {
+        sound.stop();
+    }
+    sound = new Howl({
+        src: [musicas[index].src],
+        html5: true,
+        onloaderror: function(id, err) {
+            console.error(`Erro ao carregar ${musicas[index].src}:`, err);
+            alert(`Erro ao carregar a música: ${musicas[index].name}. Verifique o arquivo.`);
+            playNextTrack();
+        },
+        onend: playNextTrack
+    });
+    sound.play();
+}
+
+
+const modal = document.getElementById("modal");
+const modalButton = document.getElementById("modal-button");
+const container = document.querySelector('.container');
+
+modal.style.display = "block";
+
+modalButton.onclick = function() {
+  modal.style.display = "none";
+  container.classList.add('active'); // Remove o congelamento e o desfoque
+  playTrack(0);
+}
+</script>
+</body>
+</html>
